@@ -1,0 +1,32 @@
+.conatiner {
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: lightgrey;
+}
+
+.gap {
+  margin: 20px 0;
+}
+
+.toolbar {
+  width: 400px;
+  display: flex;
+  composes: gap;
+}
+
+.slidelabel {
+  flex: 1;
+}
+.slidebar {
+  flex: 3;
+}
+
+.score {
+  width: 400px;
+  composes: gap;
+  text-align: center;
+}
