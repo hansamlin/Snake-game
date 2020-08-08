@@ -113,6 +113,7 @@ function App() {
           className={app.slidebar}
           onChange={(e) => {
             setSpeed(e.target.value);
+            setCount(0);
           }}
         />
       </div>
