@@ -1,4 +1,4 @@
-.conatiner {
+.container {
   width: 100%;
   display: flex;
   position: fixed;
@@ -8,9 +8,28 @@
   background: lightgrey;
 }
 
-.gap {
-  margin: 20px 0;
+@media (orientation: landscape) and (max-width: 767px) {
+  .container {
+    flex-direction: row;
+    justify-content: space-between;
+  }
+}
+
+.func {
+  display: flex;
+  flex-direction: column;
   width: 100%;
+}
+
+.gap {
+  margin: 20px auto;
+  width: 100%;
+}
+
+@media (min-width: 768px) {
+  .gap {
+    max-width: 580px;
+  }
 }
 
 .toolbar {
@@ -19,11 +38,16 @@
   composes: gap;
 }
 
+.slidegap {
+  margin: 0 5px;
+}
 .slidelabel {
   flex: 1;
+  composes: slidegap;
 }
 .slidebar {
   flex: 3;
+  composes: slidegap;
 }
 
 .score {
