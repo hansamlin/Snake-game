@@ -2,7 +2,6 @@ import React, { useEffect } from 'react';
 import app from './App.module.css';
 import { Helmet } from 'react-helmet';
 import useWindows from './components/useWindows';
-import { Swipeable } from 'react-touch';
 
 function App() {
   const [speed, setSpeed] = React.useState(15);
@@ -11,6 +10,7 @@ function App() {
   const ref = React.useRef();
   const [w, h] = size;
   const params = React.useRef({ xd: 1, yd: 0 });
+  const touch = React.useRef();
 
   function direction(d) {
     switch (d) {
@@ -33,7 +33,8 @@ function App() {
 
   useEffect(() => {
     const canvas = ref.current;
-    const width = w > 600 ? 600 : Math.ceil(w);
+    const side = w > h ? h : w;
+    const width = side > 600 ? 600 : Math.ceil(side);
     canvas.width = width;
     canvas.height = width;
     const ctx = canvas.getContext('2d');
@@ -112,39 +113,65 @@ function App() {
       clearInterval(interval);
       window.removeEventListener('keydown', keyDown);
     };
-  }, [speed, w]);
+  }, [h, speed, w]);
+
+  const handleTouchStart = (e) => {
+    const [{ clientX, clientY }] = e.touches;
+    touch.current = { clientX, clientY };
+  };
+
+  const handleTouchMove = (e) => {
+    const [{ clientX, clientY }] = e.touches;
+    const init = touch.current;
+    const distance = {
+      x: clientX - init.clientX,
+      y: clientY - init.clientY,
+    };
+    if (Math.abs(distance.x) > Math.abs(distance.y)) {
+      if (distance.x > 0) {
+        direction('right');
+      } else {
+        direction('left');
+      }
+    } else {
+      if (distance.y > 0) {
+        direction('down');
+      } else {
+        direction('up');
+      }
+    }
+  };
 
   return (
-    <div className={app.conatiner} style={{ height: h }}>
+    <div className={app.container} style={{ height: h }}>
       <Helmet>
         <title>Snake game</title>
       </Helmet>
-      <div className={app.toolbar}>
-        <label className={app.slidelabel} htmlFor="slide">
-          Speed
-        </label>
-        <input
-          type="range"
-          min="1"
-          max="50"
-          id="slide"
-          defaultValue={speed}
-          className={app.slidebar}
-          onChange={(e) => {
-            setSpeed(e.target.value);
-            setCount(0);
-          }}
-        />
+      <div className={app.func}>
+        <div className={app.toolbar}>
+          <label className={app.slidelabel} htmlFor="slide">
+            Speed
+          </label>
+          <input
+            type="range"
+            min="1"
+            max="50"
+            id="slide"
+            defaultValue={speed}
+            className={app.slidebar}
+            onChange={(e) => {
+              setSpeed(e.target.value);
+              setCount(0);
+            }}
+          />
+        </div>
+        <div className={app.score}>Score: {count}</div>
       </div>
-      <Swipeable
-        onSwipeLeft={() => direction('left')}
-        onSwipeRight={() => direction('right')}
-        onSwipeUp={() => direction('up')}
-        onSwipeDown={() => direction('down')}
-      >
-        <canvas ref={ref} />
-      </Swipeable>
-      <div className={app.score}>Score: {count}</div>
+      <canvas
+        ref={ref}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+      />
     </div>
   );
 }
