@@ -1,7 +1,7 @@
 .conatiner {
-  min-height: 100vh;
   width: 100%;
   display: flex;
+  position: fixed;
   flex-direction: column;
   justify-content: center;
   align-items: center;
@@ -10,11 +10,12 @@
 
 .gap {
   margin: 20px 0;
+  width: 100%;
 }
 
 .toolbar {
-  width: 400px;
   display: flex;
+  width: 80%;
   composes: gap;
 }
 
@@ -26,7 +27,6 @@
 }
 
 .score {
-  width: 400px;
   composes: gap;
   text-align: center;
 }
