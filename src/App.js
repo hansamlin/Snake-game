@@ -1,7 +1,9 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import app from './App.module.css';
 import { Helmet } from 'react-helmet';
 import useWindows from './components/useWindows';
+import fruitSrc from './images/kiwi-fruit.svg';
+import bombSrc from './images/bomb.svg';
 
 function App() {
   const [speed, setSpeed] = React.useState(15);
@@ -9,8 +11,10 @@ function App() {
   const size = useWindows();
   const ref = React.useRef();
   const [w, h] = size;
-  const params = React.useRef({ xd: 1, yd: 0 });
-  const touch = React.useRef();
+  const params = useRef({ xd: 1, yd: 0 });
+  const touch = useRef();
+  const bomb = useRef();
+  const fruit = useRef();
 
   function direction(d) {
     switch (d) {
@@ -44,18 +48,28 @@ function App() {
     let a = (width / 100) * 2.5,
       x = 8,
       y = 3,
-      tx = 30,
-      ty = 28;
+      tx = getRandom(),
+      ty = getRandom(),
+      bp = [{ x: getRandom(), y: getRandom() }];
+
     const snake = { tail: 5, body: [] };
 
+    bomb.current = new Image();
+    bomb.current.src = bombSrc;
+    fruit.current = new Image();
+    fruit.current.src = fruitSrc;
+
     function game() {
-      ctx.fillStyle = 'black';
+      ctx.fillStyle = 'lightgrey';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
+
       ctx.fillStyle = 'lime';
 
       for (let i = 0; i < snake.body.length; i += 1) {
         ctx.fillRect(snake.body[i].x * a, snake.body[i].y * a, a - 2, a - 2);
-        if (snake.body[i].x === x && snake.body[i].y === y) {
+
+        const body = snake.body[i];
+        if (body.x === x && body.y === y) {
           setCount(0);
           snake.tail = 5;
         }
@@ -75,15 +89,27 @@ function App() {
       if (y > s) y = 0;
       if (y < 0) y = s;
 
-      ctx.fillStyle = 'red';
-      ctx.fillRect(tx * a, ty * a, a - 1, a - 1);
+      bp.forEach(({ x, y }) => {
+        ctx.drawImage(bomb.current, x * a, y * a, a - 1, a - 1);
+      });
+
+      ctx.drawImage(fruit.current, tx * a, ty * a, a - 1, a - 1);
 
       if (tx === x && ty === y) {
         snake.tail += 1;
         setCount((prev) => ++prev);
+        bp.push({ x: getRandom(), y: getRandom() });
         tx = getRandom();
         ty = getRandom();
       }
+
+      bp.forEach((bomb) => {
+        if (bomb.x === x && bomb.y === y) {
+          snake.tail = 5;
+          setCount(0);
+          bp = [{ x: getRandom(), y: getRandom() }];
+        }
+      });
     }
 
     function getRandom() {

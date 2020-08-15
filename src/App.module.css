@@ -5,7 +5,7 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background: lightgrey;
+  background: rgba(0, 0, 0, 0.05);
 }
 
 @media (orientation: landscape) and (max-width: 767px) {
